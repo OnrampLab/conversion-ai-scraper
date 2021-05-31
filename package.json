@@ -1,0 +1,29 @@
+{
+  "name": "conversion-ai-scraper",
+  "version": "0.0.1",
+  "description": "This is a boilerplate of an Apify actor.",
+  "main": "build/main.js",
+  "dependencies": {
+    "@types/node": "^15.6.1",
+    "apify": "^1.2.1",
+    "debug": "^4.3.1",
+    "puppeteer": "*",
+    "typescript": "^4.3.2"
+  },
+  "devDependencies": {
+    "@apify/eslint-config": "^0.1.4",
+    "eslint": "^7.0.0",
+    "playwright": "^1.11.1",
+    "ts-node": "^10.0.0"
+  },
+  "scripts": {
+    "dev": "tsc --watch -p tsconfig.json",
+    "start": "node build/main.js",
+    "build": "tsc -p tsconfig.json",
+    "lint": "./node_modules/.bin/eslint ./src --ext .js,.jsx",
+    "lint:fix": "./node_modules/.bin/eslint ./src --ext .js,.jsx --fix",
+    "test": "echo \"Error: oops, the actor has no tests yet, sad!\" && exit 1"
+  },
+  "author": "It's not you it's me",
+  "license": "ISC"
+}
