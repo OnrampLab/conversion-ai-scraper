@@ -3,15 +3,35 @@ import { handleStart, handleList, handleDetail } from './routes';
 
 
 const {
-  utils: { log },
+  utils: { puppeteer, log: logUtil },
 } = Apify;
 
 Apify.main(async () => {
-  const { startUrls } = await Apify.getInput();
+  const input: Input | null = (await Apify.getInput()) as any;
+
+  if (!input || typeof input !== 'object') {
+    throw new Error('Missing input');
+  }
+
+  const { loginUsername, loginPassword, taskType, task, proxy, debugLog = false } = input;
+
+  if (debugLog) {
+    logUtil.setLevel(logUtil.LEVELS.DEBUG);
+  }
+
+  const log = logUtil.child({ prefix: 'Main' });
+
+  log.info('Starting Main Process');
+
+  const startUrls = [
+    {
+      url: 'https://app.conversion.ai/',
+    },
+  ];
 
   const requestList = await Apify.openRequestList('start-urls', startUrls);
   const requestQueue = await Apify.openRequestQueue();
-  const proxyConfiguration = await Apify.createProxyConfiguration({ useApifyProxy: false });
+  const proxyConfiguration = await Apify.createProxyConfiguration(proxy);
 
   const crawler = new Apify.PuppeteerCrawler({
     requestList,
