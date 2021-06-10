@@ -21,5 +21,6 @@
     "rootDir": "src/",
     "outDir": "build/"
   },
-  "include": ["src/"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
 }

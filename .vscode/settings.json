@@ -17,8 +17,5 @@
   "[typescriptreact]": {
     "editor.formatOnSave": true
   },
-  "files.associations": {
-    "*.json": "jsonc"
-  },
   "cSpell.words": ["apify"]
 }
