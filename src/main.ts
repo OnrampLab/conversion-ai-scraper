@@ -1,6 +1,7 @@
 import Apify from 'apify';
 import { handleStart, handleList, handleDetail } from './routes';
 
+import { preNavigationHook } from './preNavigationHook';
 
 const {
   utils: { puppeteer, log: logUtil },
@@ -37,6 +38,8 @@ Apify.main(async () => {
     requestList,
     requestQueue,
     proxyConfiguration,
+    maxRequestRetries: 0,
+    preNavigationHooks: [preNavigationHook],
     launchContext: {
       // Chrome with stealth should work for most websites.
       // If it doesn't, feel free to remove this.
