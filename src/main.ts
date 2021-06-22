@@ -1,10 +1,11 @@
 import Apify from 'apify';
-import { handleStart, handleList, handleDetail } from './routes';
-
+import { errors, InfoError } from './errors';
 import { preNavigationHook } from './preNavigationHook';
+import { handle } from './routes';
+import { ApifyContext, Input } from './types';
 
 const {
-  utils: { puppeteer, log: logUtil },
+  utils: { log: logUtil },
 } = Apify;
 
 Apify.main(async () => {
@@ -14,7 +15,7 @@ Apify.main(async () => {
     throw new Error('Missing input');
   }
 
-  const { loginUsername, loginPassword, taskType, task, proxy, debugLog = false } = input;
+  const { task, proxy, debugLog = false } = input;
 
   if (debugLog) {
     logUtil.setLevel(logUtil.LEVELS.DEBUG);
@@ -34,6 +35,21 @@ Apify.main(async () => {
   const requestQueue = await Apify.openRequestQueue();
   const proxyConfiguration = await Apify.createProxyConfiguration(proxy);
 
+  // TODO: should handle cookies
+
+  try {
+    if (Apify.isAtHome() && (!proxy || (!proxy.useApifyProxy && !proxy.proxyUrls)))
+      throw errors.proxyIsRequired();
+  } catch (error) {
+    log.info('--  --  --  --  --');
+    log.info(' ');
+    log.error('Run failed because the provided input is incorrect:');
+    log.error(error.message);
+    log.info(' ');
+    log.info('--  --  --  --  --');
+    process.exit(1);
+  }
+
   const crawler = new Apify.PuppeteerCrawler({
     requestList,
     requestQueue,
@@ -46,20 +62,51 @@ Apify.main(async () => {
       useChrome: true,
       stealth: true,
     },
-    handlePageFunction: async (context) => {
-      const {
-        url,
-        userData: { label },
-      } = context.request;
-      log.info('Page opened.', { label, url });
-      switch (label) {
-        case 'LIST':
-          return handleList(context);
-        case 'DETAIL':
-          return handleDetail(context);
-        default:
-          return handleStart(context);
+    handlePageFunction: async (context: ApifyContext) => {
+      log.debug('Start handlePageFunction');
+      const { request, page, session, browserController } = context;
+
+      try {
+        const {
+          url,
+          userData: { label },
+        } = request;
+
+        log.info('Page opened.', { label, url });
+
+        return handle(context, task);
+      } catch (e) {
+        log.debug(e.message, {
+          url: request.url,
+          userData: request.userData,
+          error: e,
+        });
+
+        if (e instanceof InfoError) {
+          // We want to inform the rich error before throwing
+          log.warning(e.message, e.toJSON());
+
+          if (['internal', 'login', 'threshold'].includes(e.meta.namespace)) {
+            session.retire();
+            await browserController.close(page);
+          }
+        }
       }
+    },
+    handleFailedRequestFunction: async ({ request, error }) => {
+      if (error instanceof InfoError) {
+        // this only happens when maxRetries is
+        // comprised mainly of InfoError, which is usually a problem
+        // with pages
+        log.exception(error, error.message, error.toJSON());
+      } else {
+        log.error(`Requests failed on ${request.url} after ${request.retryCount} retries`);
+      }
+
+      await Apify.pushData({
+        '#debug': Apify.utils.createRequestDebugInfo(request),
+        '#error': request.url,
+      });
     },
   });
 
