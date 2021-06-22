@@ -1,17 +1,49 @@
-import getDebugger from 'debug';
-const debug = getDebugger('conversion-ai-scraper:routes');
+import Apify from 'apify';
+import { InfoError } from './errors';
+import { HandlerFactory } from './task';
+import { ApifyContext, Tasks } from './types';
+import { clickAndScreenshot } from './utils';
 
-export const handleStart = async ({ request, page }) => {
-  // Handle Start URLs
+const {
+  utils: { log: logUtil },
+} = Apify;
 
-  debug('handle start!!');
-};
+export const handle = async (context: ApifyContext, task: Tasks) => {
+  const log = logUtil.child({ prefix: 'Routes' });
 
-export const handleList = async ({ request, page }) => {
-  // Handle pagination
-  debug('handle list');
-};
+  const { request, page } = context;
 
-export const handleDetail = async ({ request, page }) => {
-  // Handle details
+  try {
+    log.debug('Waiting for home page');
+    await page.waitForFunction(
+      () => {
+        return document.querySelector('#app');
+      },
+      { timeout: 15000 },
+    );
+
+    await Promise.all([
+      page.waitForSelector('#app', { visible: true, timeout: 15000 }),
+      page.waitForSelector('button div', { visible: true, timeout: 15000 }),
+    ]);
+
+    const targetText = 'Templates';
+    await clickAndScreenshot(
+      page,
+      targetText,
+      `//button/div[contains(., "${targetText}")]`,
+      `//h2[contains(., "${targetText}")]`,
+    );
+
+    const handler = HandlerFactory.createHandler(task);
+    log.debug('Created handler', { handle });
+
+    await handler.handle(page, task);
+  } catch (error) {
+    throw new InfoError<typeof error>(`Failed to do task`, {
+      url: page.url(),
+      namespace: 'route',
+      task: task,
+    });
+  }
 };
