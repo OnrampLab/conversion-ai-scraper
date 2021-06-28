@@ -6,3 +6,4 @@ build
 apify_storage
 /types
 /screenshots
+.env
