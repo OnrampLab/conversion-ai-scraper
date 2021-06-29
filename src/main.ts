@@ -1,4 +1,5 @@
 import Apify from 'apify';
+import { config } from './config';
 import { errors, InfoError } from './errors';
 import { preNavigationHook } from './preNavigationHook';
 import { handle } from './routes';
@@ -15,7 +16,7 @@ Apify.main(async () => {
     throw new Error('Missing input');
   }
 
-  const { task, proxy, debugLog = false } = input;
+  const { task, proxy, debugLog = false, useStealth = false, useChrome } = input;
 
   if (debugLog) {
     logUtil.setLevel(logUtil.LEVELS.DEBUG);
@@ -23,7 +24,7 @@ Apify.main(async () => {
 
   const log = logUtil.child({ prefix: 'Main' });
 
-  log.info('Starting Main Process');
+  log.info('Starting Main Process', { useChrome, isAtHome: Apify.isAtHome() });
 
   const startUrls = [
     {
@@ -44,7 +45,7 @@ Apify.main(async () => {
     log.info('--  --  --  --  --');
     log.info(' ');
     log.error('Run failed because the provided input is incorrect:');
-    log.error(error.message);
+    log.error((error as Error).message);
     log.info(' ');
     log.info('--  --  --  --  --');
     process.exit(1);
@@ -57,10 +58,12 @@ Apify.main(async () => {
     maxRequestRetries: 0,
     preNavigationHooks: [preNavigationHook],
     launchContext: {
-      // Chrome with stealth should work for most websites.
-      // If it doesn't, feel free to remove this.
-      useChrome: true,
-      stealth: true,
+      // @ts-ignore
+      launchOptions: {
+        ...getLaunchOptions(),
+      },
+      useChrome: typeof useChrome === 'boolean' ? useChrome : Apify.isAtHome(),
+      stealth: useStealth,
     },
     handlePageFunction: async (context: ApifyContext) => {
       log.debug('Start handlePageFunction');
@@ -76,17 +79,19 @@ Apify.main(async () => {
 
         return handle(context, task);
       } catch (e) {
-        log.debug(e.message, {
+        const error = e as Error;
+
+        log.debug(error.message, {
           url: request.url,
           userData: request.userData,
-          error: e,
+          error: error,
         });
 
-        if (e instanceof InfoError) {
+        if (error instanceof InfoError) {
           // We want to inform the rich error before throwing
-          log.warning(e.message, e.toJSON());
+          log.warning(error.message, error.toJSON());
 
-          if (['internal', 'login', 'threshold'].includes(e.meta.namespace)) {
+          if (['internal', 'login', 'threshold'].includes(error.meta.namespace)) {
             session.retire();
             await browserController.close(page);
           }
@@ -98,7 +103,7 @@ Apify.main(async () => {
         // this only happens when maxRetries is
         // comprised mainly of InfoError, which is usually a problem
         // with pages
-        log.exception(error, error.message, error.toJSON());
+        log.exception(error);
       } else {
         log.error(`Requests failed on ${request.url} after ${request.retryCount} retries`);
       }
@@ -114,3 +119,14 @@ Apify.main(async () => {
   await crawler.run();
   log.info('Crawl finished.');
 });
+
+function getLaunchOptions() {
+  if (!config.app.headless) {
+    return null;
+  }
+
+  return {
+    headless: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  };
+}
