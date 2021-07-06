@@ -3,7 +3,7 @@ import { Log } from 'apify-shared/log';
 import { Page } from 'puppeteer';
 import { InfoError } from '../../../errors';
 import { SkillTask, SkillTasks, Tasks } from '../../../types';
-import { clickAndScreenshot } from '../../../utils';
+import { click } from '../../../utils';
 import { AbstractHandler } from './AbstractHandler';
 
 const {
@@ -67,7 +67,7 @@ export abstract class AbstractAdsSkillHandler extends AbstractHandler {
     const url = await page.evaluate(() => window.location.href);
     this.log.info('Page opened.', { url });
 
-    await clickAndScreenshot(
+    await click(
       page,
       this.name,
       `//button/div[contains(., "${this.name}")]`,

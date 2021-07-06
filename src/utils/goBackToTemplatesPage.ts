@@ -1,9 +1,9 @@
 import { Page } from 'puppeteer';
-import { clickAndScreenshot } from './clickAndScreenshot';
+import { click } from './click';
 
 export const goBackToTemplatesPage = async (page: Page) => {
   const targetText = 'Templates';
-  await clickAndScreenshot(
+  await click(
     page,
     targetText,
     `//button[@content="${targetText}"]`,

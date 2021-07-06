@@ -2,7 +2,7 @@ import Apify from 'apify';
 import { InfoError } from './errors';
 import { HandlerFactory } from './task';
 import { ApifyContext, Tasks } from './types';
-import { clickAndScreenshot } from './utils';
+import { click } from './utils';
 
 const {
   utils: { log: logUtil },
@@ -28,7 +28,7 @@ export const handle = async (context: ApifyContext, task: Tasks) => {
     ]);
 
     const targetText = 'Templates';
-    await clickAndScreenshot(
+    await click(
       page,
       targetText,
       `//button[div[contains(., "${targetText}")]]`,

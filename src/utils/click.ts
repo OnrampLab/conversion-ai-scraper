@@ -5,7 +5,7 @@ const {
   utils: { log },
 } = Apify;
 
-export const clickAndScreenshot = async (
+export const click = async (
   page: Page,
   targetText: string,
   buttonXpath: string,
