@@ -28,7 +28,7 @@ Apify.main(async () => {
 
   const startUrls = [
     {
-      url: 'https://app.conversion.ai/',
+      url: 'https://app.jarvis.ai/',
     },
   ];
 

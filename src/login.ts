@@ -16,7 +16,7 @@ export const login = async (username: string, password: string, page: Page, requ
 
   log.info('Attempting to log in');
 
-  const url = 'https://app.conversion.ai/';
+  const url = 'https://app.jarvis.ai/';
 
   try {
     // go to login page
