@@ -1,13 +1,13 @@
 {
-  "title": "Input schema for conversion.ai scraper",
-  "description": "Below you can provide param which will be used to set parameters to conversion.ai for skills. <br/> <strong>Important: Proxy is required to use this solution</strong>",
+  "title": "Input schema for jarvis.ai scraper",
+  "description": "Below you can provide param which will be used to set parameters to jarvis.ai for skills. <br/> <strong>Important: Proxy is required to use this solution</strong>",
   "type": "object",
   "schemaVersion": 1,
   "properties": {
     "task": {
       "title": "Task",
       "type": "object",
-      "description": "The task you want to run on conversion.ai. Please be aware that the object content is different for each type",
+      "description": "The task you want to run on jarvis.ai. Please be aware that the object content is different for each type",
       "default": {},
       "editor": "json",
       "prefill": {}

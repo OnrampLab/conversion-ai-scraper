@@ -1,5 +1,5 @@
 {
-  "name": "conversion-ai-scraper",
+  "name": "jarvis-ai-scraper",
   "version": "0.0.1",
   "description": "This is a boilerplate of an Apify actor.",
   "main": "build/main.js",
@@ -25,7 +25,7 @@
   "prettier": "@onr/prettier-config",
   "scripts": {
     "dev": "tsc --watch -p tsconfig.json",
-    "apify": "DEBUG=conversion-ai-scraper:* apify run --purge",
+    "apify": "DEBUG=jarvis-ai-scraper:* apify run --purge",
     "start:watch": "gulp watch",
     "start": "node -r dotenv/config build/main.js",
     "build": "tsc -p tsconfig.json",

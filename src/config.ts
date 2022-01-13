@@ -2,8 +2,8 @@ import { env } from './utils';
 
 export const config = {
   user: {
-    email: env('CONVERSION_AI_EMAIL'),
-    password: env('CONVERSION_AI_PASSWORD'),
+    email: env('JARVIS_AI_EMAIL'),
+    password: env('JARVIS_AI_PASSWORD'),
   },
   app: {
     /*
