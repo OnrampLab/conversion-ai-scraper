@@ -1,5 +1,5 @@
 import { Page } from 'puppeteer';
-import { AdsOptions, Options, SkillOptions } from './conversion-ai';
+import { AdsOptions, Options, SkillOptions } from './jarvis-ai';
 
 export interface TaskBasicOptions {
   name: TaskNames;

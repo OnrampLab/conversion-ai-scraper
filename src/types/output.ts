@@ -1,4 +1,4 @@
-import { AdsOptions } from './conversion-ai';
+import { AdsOptions } from './jarvis-ai';
 
 export interface AdsContent {
   param: AdsOptions;

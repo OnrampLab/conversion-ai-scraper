@@ -4,7 +4,7 @@ WORKDIR /app
 
 USER root
 
-RUN npm install -g yarn gulp-cli apify-cli && yarn --version
+RUN npm install -g gulp-cli apify-cli
 
 # Define build arguments
 ARG USER_ID

@@ -2,8 +2,6 @@ FROM apify/actor-node-puppeteer-chrome:16 AS builder
 
 USER root
 
-RUN npm install -g yarn && yarn --version
-
 COPY package.json yarn.lock ./
 
 RUN yarn install  --frozen-lockfile
