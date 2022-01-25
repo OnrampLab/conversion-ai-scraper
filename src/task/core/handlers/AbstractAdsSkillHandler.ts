@@ -92,7 +92,7 @@ export abstract class AbstractAdsSkillHandler extends AbstractHandler {
 
     await page.waitForSelector('pre', {
       visible: true,
-      timeout: 30000,
+      timeout: 60000,
     });
   }
 

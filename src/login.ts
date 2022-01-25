@@ -27,9 +27,9 @@ export const login = async (username: string, password: string, page: Page, requ
     const submitButton = 'form button[type="submit"]';
 
     await Promise.all([
-      page.waitForSelector(usernameInput, { visible: true, timeout: 15000 }),
-      page.waitForSelector(passwordInput, { visible: true, timeout: 15000 }),
-      page.waitForSelector(submitButton, { visible: true, timeout: 15000 }),
+      page.waitForSelector(usernameInput, { visible: true, timeout: 30000 }),
+      page.waitForSelector(passwordInput, { visible: true, timeout: 30000 }),
+      page.waitForSelector(submitButton, { visible: true, timeout: 30000 }),
     ]);
 
     log.info('Typing email & password');

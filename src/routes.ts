@@ -23,8 +23,8 @@ export const handle = async (context: ApifyContext, task: Tasks) => {
     );
 
     await Promise.all([
-      page.waitForSelector('#app', { visible: true, timeout: 15000 }),
-      page.waitForSelector('button div', { visible: true, timeout: 15000 }),
+      page.waitForSelector('#app', { visible: true, timeout: 30000 }),
+      page.waitForSelector('button div', { visible: true, timeout: 30000 }),
     ]);
 
     const targetText = 'Templates';
