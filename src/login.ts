@@ -22,22 +22,29 @@ export const login = async (username: string, password: string, page: Page, requ
     // go to login page
     await page.goto(url);
 
+    const dashboardHeadline = '//h2/div[contains(text(),"Dashboard")]';
     const usernameInput = 'input[id="email"]';
     const passwordInput = 'input[id="password"]';
     const submitButton = 'form button[type="submit"]';
 
-    await Promise.all([
-      page.waitForSelector(usernameInput, { visible: true, timeout: 30000 }),
-      page.waitForSelector(passwordInput, { visible: true, timeout: 30000 }),
-      page.waitForSelector(submitButton, { visible: true, timeout: 30000 }),
-    ]);
+    try {
+      await Promise.all([
+        page.waitForSelector(usernameInput, { visible: true, timeout: 30000 }),
+        page.waitForSelector(passwordInput, { visible: true, timeout: 30000 }),
+        page.waitForSelector(submitButton, { visible: true, timeout: 30000 }),
+      ]);
 
-    log.info('Typing email & password');
-    await page.type(usernameInput, username, { delay: 10 });
-    await page.type(passwordInput, password, { delay: 10 });
+      log.info('Typing email & password');
+      await page.type(usernameInput, username, { delay: 10 });
+      await page.type(passwordInput, password, { delay: 10 });
 
-    log.info('Submit form');
-    await page.click(submitButton);
+      log.info('Submit form');
+      await page.click(submitButton);
+    } catch (e: any) {
+      await page.waitForXPath(dashboardHeadline, { visible: true, timeout: 30000 });
+      log.info('User had already logined');
+      return;
+    }
 
     try {
       const errorXpath =
