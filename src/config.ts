@@ -9,6 +9,6 @@ export const config = {
     /*
      * When using docker, you should enable the headless mode
      */
-    headless: Boolean(env('ENABLE_HEADLESS', 'false')),
+    headless: Boolean(Number(env('ENABLE_HEADLESS', '0'))),
   },
 };

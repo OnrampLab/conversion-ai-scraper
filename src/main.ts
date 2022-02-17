@@ -16,7 +16,14 @@ Apify.main(async () => {
     throw new Error('Missing input');
   }
 
-  const { task, proxy, debugLog = false, useStealth = false, useChrome } = input;
+  const {
+    task,
+    proxy,
+    debugLog = false,
+    useStealth = false,
+    useChrome,
+    maxRequestRetries = 5,
+  } = input;
 
   if (debugLog) {
     logUtil.setLevel(logUtil.LEVELS.DEBUG);
@@ -55,7 +62,7 @@ Apify.main(async () => {
     requestList,
     requestQueue,
     proxyConfiguration,
-    maxRequestRetries: 0,
+    maxRequestRetries,
     preNavigationHooks: [preNavigationHook],
     launchContext: {
       // @ts-ignore

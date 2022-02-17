@@ -6,4 +6,5 @@ export interface Input {
   debugLog: boolean;
   useStealth: boolean;
   useChrome: boolean;
+  maxRequestRetries: number;
 }
